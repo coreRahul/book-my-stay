@@ -1,0 +1,150 @@
+import java.util.*;
+
+// Reservation class
+class Reservation {
+    private String reservationId;
+    private String guestName;
+    private String roomType;
+
+    public Reservation(String reservationId, String guestName, String roomType) {
+        this.reservationId = reservationId;
+        this.guestName = guestName;
+        this.roomType = roomType;
+    }
+
+    public String getReservationId() {
+        return reservationId;
+    }
+
+    public String getGuestName() {
+        return guestName;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation ID: " + reservationId +
+               ", Guest: " + guestName +
+               ", Room Type: " + roomType;
+    }
+}
+
+// Booking History class (stores confirmed bookings)
+class BookingHistory {
+    private List<Reservation> history;
+
+    public BookingHistory() {
+        history = new ArrayList<>();
+    }
+
+    // Add confirmed reservation
+    public void addReservation(Reservation reservation) {
+        history.add(reservation);
+    }
+
+    // Get all reservations
+    public List<Reservation> getAllReservations() {
+        return history;
+    }
+}
+
+// Reporting service
+class BookingReportService {
+
+    // Display all bookings
+    public void showAllBookings(List<Reservation> reservations) {
+        if (reservations.isEmpty()) {
+            System.out.println("No bookings found.");
+            return;
+        }
+
+        System.out.println("\n=== Booking History ===");
+        for (Reservation r : reservations) {
+            System.out.println(r);
+        }
+    }
+
+    // Generate summary report
+    public void generateSummary(List<Reservation> reservations) {
+        System.out.println("\n=== Booking Summary Report ===");
+
+        int totalBookings = reservations.size();
+        Map<String, Integer> roomTypeCount = new HashMap<>();
+
+        for (Reservation r : reservations) {
+            roomTypeCount.put(
+                r.getRoomType(),
+                roomTypeCount.getOrDefault(r.getRoomType(), 0) + 1
+            );
+        }
+
+        System.out.println("Total Bookings: " + totalBookings);
+        System.out.println("Bookings by Room Type:");
+
+        for (String type : roomTypeCount.keySet()) {
+            System.out.println("- " + type + ": " + roomTypeCount.get(type));
+        }
+    }
+}
+
+// Main class
+public class UseCase8BookingHistoryReport {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        BookingHistory history = new BookingHistory();
+        BookingReportService reportService = new BookingReportService();
+
+        System.out.println("=== Booking History & Reporting System ===");
+
+        while (true) {
+            System.out.println("\n1. Confirm Booking");
+            System.out.println("2. View Booking History");
+            System.out.println("3. Generate Report");
+            System.out.println("4. Exit");
+            System.out.print("Choose option: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.print("Enter Reservation ID: ");
+                    String id = sc.nextLine();
+
+                    System.out.print("Enter Guest Name: ");
+                    String name = sc.nextLine();
+
+                    System.out.print("Enter Room Type: ");
+                    String room = sc.nextLine();
+
+                    Reservation reservation = new Reservation(id, name, room);
+                    history.addReservation(reservation);
+
+                    System.out.println("Booking confirmed and added to history!");
+                    break;
+
+                case 2:
+                    reportService.showAllBookings(history.getAllReservations());
+                    break;
+
+                case 3:
+                    reportService.generateSummary(history.getAllReservations());
+                    break;
+
+                case 4:
+                    System.out.println("Exiting...");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
+    }
+}
